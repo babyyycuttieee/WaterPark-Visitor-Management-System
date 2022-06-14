@@ -15,81 +15,68 @@ describe('Express Route Test', function () {
 	it('User login successfully', async () => {
 		return request
 			.post('/login')
-			.send({username: "Anya Forger", userpassword: "0123456"})
-			.expect('Content-Type', /json/)
+			.send({username: "Salvador Kozey", userpassword: "rIfr22Me1ZnAL2w"})
+			.expect('Content-Type', /text/)
 			.expect(200).then(response => {
-				//expect(response.text).toEqual("Login success");
-				expect(response.body).toEqual(
-									expect.objectContaining({
-										_id: expect.any(String),
-										username: expect.any(String),
-										//userpassword: expect.any(String),
-									})
-								);
+				expect(response.text).toEqual("Login success");
 			});
 	});
 
 	it('login failed', async () => {
 		return request
 			.post('/login')
-			.send({username: "Kristi Adams", userpassword: "012345"})
-			.expect('Content-Type', /json/)
+			.send({username: "Salvador Kozey", userpassword: "012345"})
+			.expect('Content-Type', /text/)
 			.expect(404).then(response => {
-				//expect(response.text).toEqual("Invalid Input");
-				expect(response.body).toEqual(
-									expect.objectContaining({
-										_id: expect.any(String),
-										username: expect.any(String),
-									})
-								);
-				});
+				expect(response.text).toEqual("Invalid Input");
+	});
 });
 	
 
-// 	it('register', async () => {
-// 		return request
-// 			.post('/register')
-// 			.send({username: "Donovan Desmond", userpassword: "$123456"})
-// 			.expect('Content-Type', /text/)
-// 			.expect(200).then(response => {
-// 				expect(response.text).toEqual("Successfully, create new account");
-// 	});
-// });
+	it('register', async () => {
+		return request
+			.post('/register')
+			.send({username: "register sucess", userpassword: "123456"})
+			.expect('Content-Type', /text/)
+			.expect(200).then(response => {
+				expect(response.text).toEqual("Successfully, create new account");
+	});
+});
 
 	it('register failed', async () => {
 		return request
 			.post('/register')
-			.send({username: "Anya Forger", userpassword: "0123456"})
+			.send({username: "user4", userpassword: "123456789"})
 			.expect('Content-Type', /text/)
 			.expect(404).then(response => {
 				expect(response.text).toEqual("Username exists");
 			});
 	});
 
-	// it('update successfully', async () => {
-	// 	return request
-	// 		.patch('/update')
-	// 		.send({username: "Sherri Kautzer"})
-	// 		.expect(200)
-	// });
+	it('update successfully', async () => {
+		return request
+			.patch('/update')
+			.send({username: "Gwen Willms"})
+			.expect(200)
+	});
 
-	// it('delete successfully', async () => {
-    // 	return request
-    // 	  .delete('/delete')
-    // 	  .send({username:"Mark Wunsch", userpassword: "tuvp3kjsqVRA_xG"})
-    // 	  .expect('Content-Type', /text/)
-    // 	  .expect(200).then(response => {
-    //  			expect(response.text).toEqual("Successfully Delete");
-	// 		});
-	// });
+	it('delete successfully', async () => {
+    	return request
+    	  .delete('/delete')
+    	  .send({username:"Felix Rogahn", userpassword: "l2S8qohithdNNoQ"})
+    	  .expect('Content-Type', /text/)
+    	  .expect(200).then(response => {
+     			expect(response.text).toEqual("Successfully Delete");
+			});
+	});
 
-  	// it('delete failed', async () => {
-    // 	return request
-    // 	.delete('/delete')
-    //   	.send({username: 'user1', userpassword: "1010"})
-    //   	.expect('Content-Type', /text/)
-    //   	.expect(404).then(response => {
-    //     		expect(response.text).toEqual("Delete Failed");
-    // 	});
-	// });
+  	it('delete failed', async () => {
+    	return request
+    	.delete('/delete')
+      	.send({username: 'delete failed', userpassword: "1010"})
+      	.expect('Content-Type', /text/)
+      	.expect(404).then(response => {
+        		expect(response.text).toEqual("Delete Failed");
+    	});
+	});
 });
