@@ -7,7 +7,7 @@ const saltRounds = 10;
 let encryptedPassword;
 
 
-const username = faker.name.findName();
+const securityusername = faker.name.findName();
 const userpassword = faker.internet.password();
 
 bcrypt.genSalt(saltRounds, function (saltError, salt) {
@@ -40,12 +40,12 @@ describe("Security Account", () => {
 	})
 
 	test("New management registration", async () => {
-		const res = await Security.register(username,userpassword,encryptedPassword, "security")
+		const res = await Security.register(securityusername,userpassword,encryptedPassword, "security")
 		expect(res).toBe("Successfully, create new account")
 	})
 
 	test("Duplicate username", async () => {
-		const res = await Security.register(username,userpassword,encryptedPassword, "security")
+		const res = await Security.register(securityusername,userpassword,encryptedPassword, "security")
 		expect(res).toBe("Username exists")
 	})
 
@@ -65,14 +65,14 @@ describe("Security Account", () => {
 	  })
 
 	test("Management login successfully", async () => {
-		const res = await Security.login(username,userpassword, "security")
-		expect(res.username).toBe(username)
+		const res = await Security.login(securityusername,userpassword, "security")
+		expect(res.securityusername).toBe(securityusername)
 		expect(res.userpassword).toBe(userpassword)
 		expect(res.role).toBe("security")
 	})
 
 	// test("Delete", async () => {
 	// 	const res = await Security.delete(" ","security")
-	// 	expect(res.securityname).toBe(" ")
+	// 	expect(res.securityusername).toBe(" ")
 	//   })
 });
