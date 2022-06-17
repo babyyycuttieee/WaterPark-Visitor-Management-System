@@ -55,7 +55,7 @@ class Security {
 	}
 
 	//login
-	static async login(securityusername, userpassword) {
+	static async login(securityusername, userpassword, role) {
 
 		const user = await security.findOne({$or: [{securityusername : securityusername}, {userpassword : userpassword}]})
 		.then(async user =>{
