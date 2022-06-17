@@ -1,5 +1,5 @@
 const MongoClient = require("mongodb").MongoClient;
-const Security = require("./user")
+const Security = require("./security")
 
 const { faker } = require('@faker-js/faker');
 const bcrypt = require("bcryptjs");
@@ -40,21 +40,21 @@ describe("Security Account", () => {
 	})
 
 	test("New management registration", async () => {
-		const res = await Security.register(username,userpassword,encryptedPassword)
+		const res = await Security.register(username,userpassword,encryptedPassword, "security")
 		expect(res).toBe("Successfully, create new account")
 	})
 
 	test("Duplicate username", async () => {
-		const res = await Security.register(username,userpassword,encryptedPassword)
+		const res = await Security.register(username,userpassword,encryptedPassword, "security")
 		expect(res).toBe("Username exists")
 	})
 
-	test("User login invalid username", async () => {
+	test("Security login invalid username", async () => {
 		const res = await Security.login("Anya",userpassword)
 		expect(res).toBe("The Username is invalid")
 	})
 
-	test("User login invalid password", async () => {
+	test("Security login invalid password", async () => {
 		const res = await Security.login("Anya Forger","lAiZWcKGPp3qQbn")
 		expect(res).toBe("The Password is invalid")
 	})
@@ -65,8 +65,14 @@ describe("Security Account", () => {
 	  })
 
 	test("Management login successfully", async () => {
-		const res = await Security.login(username,userpassword)
+		const res = await Security.login(username,userpassword, "security")
 		expect(res.username).toBe(username)
 		expect(res.userpassword).toBe(userpassword)
+		expect(res.role).toBe("security")
 	})
+
+	// test("Delete", async () => {
+	// 	const res = await Security.delete(" ","security")
+	// 	expect(res.securityname).toBe(" ")
+	//   })
 });
