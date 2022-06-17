@@ -1,4 +1,4 @@
-let users;
+let security;
 const { faker } = require('@faker-js/faker');
 const bcrypt = require("bcryptjs");
 const req = require('express/lib/request');
@@ -10,16 +10,8 @@ class Security {
 		security = await conn.db("ALab7").collection("security")
 	}
 
-	/**
-	 * @remarks
-	 * This method is not implemented yet. To register a new user, you need to call this method.
-	 * 
-	 * @param {*} username 
-	 * @param {*} userpassword 
-	 */
 
-//register
-	static async register(username,userpassword,encryptedPassword) {
+	static async register(securityusername,userpassword,encryptedPassword,role) {
 
 		bcrypt.genSalt(saltRounds, function (saltError, salt) {
 			if (saltError) {
@@ -38,13 +30,13 @@ class Security {
 
 		const user = await security.findOne({  
 			$and: [{ 
-			username: username,       
+			securityusername: securityusername,       
 			userpassword: userpassword,
 			}]})
 			.then(async user =>{
 			// TODO: Check if username exists
 			if (user){
-				if ( user.username == username )		
+				if ( user.securityusername == securityusername )		
 				{
 					return "Username exists";
 				}
@@ -52,7 +44,7 @@ class Security {
 			else{
 				// TODO: Save user to database
 				await security.insertOne({					
-					username : username,
+					securityusername : securityusername,
 					userpassword : userpassword,
 					encryptedpassword : encryptedPassword
 				})
@@ -63,17 +55,17 @@ class Security {
 	}
 
 	//login
-	static async login(username, userpassword) {
+	static async login(securityusername, userpassword) {
 
-		const user = await security.findOne({$or: [{username : username}, {userpassword : userpassword}]})
+		const user = await security.findOne({$or: [{securityusername : securityusername}, {userpassword : userpassword}]})
 		.then(async user =>{
-			//console.log(username)
+			//console.log(securityusername)
 			if (user)
 			{													
-				if (user.username != username && user.userpassword == userpassword) {		
+				if (user.securityusername != securityusername && user.userpassword == userpassword) {		
 					return "The Username is invalid";
 				}
-				else if (user.username == username && user.userpassword != userpassword) 
+				else if (user.securityusername == securityusername && user.userpassword != userpassword) 
 				{	
 					return "The Password is invalid";
 				}
@@ -90,24 +82,24 @@ class Security {
 		return user;
 	}
 
-	//updates
-	static async update(username) {
-
-		return security.findOne({username : username})
-		.then(async user =>{
-			//console.log(user)
-			if (user)
-			{									
-				return security.updateOne({username : username},{"$set":{Age: "24" }})
-				.then(result =>{
-					//console.log(result)
-				})
+	static async delete (securityusername,userpassword){
+		return security.findOne({
+		  securityusername : securityusername
+		}).then(async user =>{
+	
+		  if (user){
+			if (user.userpassword != userpassword){
+			  return "The Password is invalid"
 			}
-			else
-			{
-			return "The Username is incorrect";
+			else {
+			  await security.deleteOne({securityusername:securityusername})
+				return "Data deleted successfully"
 			}
+		  }
+		  else {
+			return "The Username is invalid"
+		  }
 		})
-	}
+	}	
 }
 module.exports = Security;
