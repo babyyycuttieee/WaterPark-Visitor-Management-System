@@ -1,78 +1,67 @@
 const MongoClient = require("mongodb").MongoClient;
-const Security = require("./security")
+const Management = require("./security")
 
-const { faker } = require('@faker-js/faker');
-const bcrypt = require("bcryptjs");
-const saltRounds = 10;
-let encryptedPassword;
+// const { faker } = require('@faker-js/faker');
 
+// const managername = faker.name.findName();
+// const managerpassword = faker.internet.password();
+// const name = faker.name.findName();
+// const email = faker.internet.email();
+// const phonenumber = faker.phone.phoneNumber('601#-#######');
 
-const securityusername = faker.name.findName();
-const userpassword = faker.internet.password();
+const jwt = require('jsonwebtoken');
+function generateAccessToken(payload) {
+  return jwt.sign(payload, "ainincantik", {expiresIn:'1h'});
+}
 
-bcrypt.genSalt(saltRounds, function (saltError, salt) {
-    if (saltError) {
-      throw saltError
-    } else {
-      bcrypt.hash(userpassword, salt, function(hashError, hash) {
-      if (hashError) {
-        throw hashError
-      } else {
-        encryptedPassword = hash;
-        //console.log("Hash:",hash);
-        
-      }
-      })
-    }
-    })
-
-describe("Security Account", () => {
-	let client;
-	beforeAll(async () => {
-		client = await MongoClient.connect(
-			"mongodb+srv://m001-student:m001-mongodb-basic@sandbox.cth4i.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+describe("User Account", () =>{
+    let client;
+    beforeAll(async () =>{
+        client = await MongoClient.connect(
+			"mongodb+srv://m001-student:m001-mongodb-basics@sandbox.tlq8x.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
 			{ useNewUrlParser: true },
 		);
-		Security.injectDB(client);
+		Management.injectDB(client);
 	})
 	afterAll(async () => {
 		await client.close();
 	})
 
-	test("New management registration", async () => {
-		const res = await Security.register(securityusername,userpassword,encryptedPassword, "security")
-		expect(res).toBe("Successfully, create new account")
-	})
-
-	test("Duplicate username", async () => {
-		const res = await Security.register(securityusername,userpassword,encryptedPassword, "security")
-		expect(res).toBe("Username exists")
-	})
-
-	test("Security login invalid username", async () => {
-		const res = await Security.login("Anya",userpassword)
+	test("Management login invalid username", async () => {
+		const res = await Management.login("Anya","kOrLkU8mt9buM0J")
 		expect(res).toBe("The Username is invalid")
 	})
 
-	test("Security login invalid password", async () => {
-		const res = await Security.login("Anya Forger","lAiZWcKGPp3qQbn")
+	test("Management login invalid password", async () => {
+		const res = await Management.login("Rufus Gerlach","enMwT_9lWG7awg")
 		expect(res).toBe("The Password is invalid")
 	})
 
 	test("Username doesn't exist to login", async () => {
-		const res = await Security.login("Forger","1234")
+		const res = await Management.login("Forger","kOrLkU8mt9buM0")
 		expect(res).toBe("Invalid Input");
 	  })
 
 	test("Management login successfully", async () => {
-		const res = await Security.login(securityusername,userpassword, "security")
-		expect(res.securityusername).toBe(securityusername)
-		expect(res.userpassword).toBe(userpassword)
-		expect(res.role).toBe("security")
+		const res = await Management.login("Rufus Gerlach", "kOrLkU8mt9buM0J")
+		expect(res.managername).toBe("Rufus Gerlach")
+		expect(res.managerpassword).toBe("kOrLkU8mt9buM0J")
+		expect(res.role).toBe("management")
 	})
-
-	// test("Delete", async () => {
-	// 	const res = await Security.delete(" ","security")
-	// 	expect(res.securityusername).toBe(" ")
-	//   })
 });
+
+
+function verifyToken(req,res,next){
+    const authHeader=req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+  
+    jwt.verify(token, "ainincantik", (err,user)=>{
+      console.log(err)
+  
+      if (err) return res.sendStatus(403)
+  
+      req.user = user
+  
+      next()
+    })
+  }
