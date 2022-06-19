@@ -8,7 +8,7 @@ let encryptedPassword;
 
 class User {
 	static async injectDB(conn) {
-		users = await conn.db("VMS").collection("users")
+		users = await conn.db("Ass").collection("staffs")
 	}
 
 	/**
@@ -17,10 +17,15 @@ class User {
 	 * 
 	 * @param {*} username 
 	 * @param {*} userpassword 
+	 * @param {*} name
+	 * @param {*} phonenumber
+	 * @param {*} email
+	 * @param {*} staffunit
+	 * @param {*} role
 	 */
 
 //register
-	static async register(username,userpassword,encryptedPassword) {
+	static async register(username,userpassword,name,email,phonenumber,staffunit,role,encryptedPassword) {
 
 		bcrypt.genSalt(saltRounds, function (saltError, salt) {
 			if (saltError) {
@@ -45,20 +50,25 @@ class User {
 			.then(async user =>{
 			// TODO: Check if username exists
 			if (user){
-				if ( user.username == username )		
-				{
-					return "Username exists";
+				if (user.username == username) {		
+					return "Username exist";
 				}
 			}
-			else{
+			else
+				{
 				// TODO: Save user to database
-				await users.insertOne({					
-					username : username,
-					userpassword : userpassword,
-					encryptedpassword : encryptedPassword
-				})
-				return "Successfully, create new account"
-			}
+					await users.insertOne({					
+						username : username,
+						userpassword : userpassword,
+						name : name,
+						email : email,
+						phonenumber : phonenumber,
+						staffunit : staffunit,
+						encryptedpassword : encryptedPassword,
+						role : role
+					})
+					return "Successfully, create new staff's account"
+				}
 		})	
 		return user;	
 	}
@@ -92,44 +102,59 @@ class User {
 	}
 
 	//updates
-	// static async update(username) {
+	static async update(username) {
 
-	// 	return users.findOne({username : username})
-	// 	.then(async user =>{
-	// 		//console.log(user)
-	// 		if (user)
-	// 		{									
-	// 			return users.updateOne({username : username},{"$set":{Age: "28" }})
-	// 			.then(result =>{
-	// 				//console.log(result)
-	// 			})
-	// 		}
-	// 		else
-	// 		{
-	// 		return "The Username is incorrect";
-	// 		}
-	// 	})
-	// }
+		return users.findOne({username : username})
+		.then(async user =>{
+			//console.log(user)
+			if (user)
+			{									
+				return users.updateOne({username : username},{"$set":{new_staffunit: "864052719" }})
+				.then(result =>{
+					return "Update success"
+				})
+			}
+			else
+			{
+			return "The Username is incorrect";
+			}
+		})
+	}
 
-	// //delete
-	// static async delete (username,userpassword){
-	// 	return users.findOne({
-	// 	  username : username
-	// 	}).then(async user =>{
+	//delete
+	static async delete (username,userpassword){
+		return users.findOne({
+		  username : username
+		}).then(async user =>{
 	
-	// 	  if (user){
-	// 		if (user.userpassword != userpassword){
-	// 		  return "The Password is invalid"
-	// 		}
-	// 		else {
-	// 		  await users.deleteOne({username:username})
-	// 			return "Data deleted successfully"
-	// 		}
-	// 	  }
-	// 	  else {
-	// 		return "The Username is invalid"
-	// 	  }
-	// 	})
-	//   }	
+		  if (user){
+			if (user.userpassword != userpassword){
+			  return "The Password is invalid"
+			}
+			else {
+			  await users.deleteOne({username:username})
+				return "Data deleted successfully"
+			}
+		  }
+		  else {
+			return "Invalid input"
+		  }
+		})
+	  }	
+	
+	//view
+	static async view(username){
+		return users.findOne({username: username})
+		.then(async user => {
+			if(user){
+				if(user.username == username){
+					return "Username view"
+				}
+			}
+			else{
+				return "Unkown username"
+			}
+		})
+	  }
 }
 module.exports = User;
