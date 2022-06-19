@@ -1,7 +1,11 @@
 {
-  "name": "benr2423-week07-master",
+  "name": "waterpark-vms",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "WATERPARK Visitor Management System API",
+  "main": "main.js",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "node main.js",
     "test": "jest"
@@ -11,18 +15,15 @@
     "bcryptjs": "^2.4.3",
     "express": "^4.18.1",
     "faker": "^6.6.6",
-    "mongodb": "^4.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.7.0",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^6.3.1",
     "@shelf/jest-mongodb": "^2.2.2",
-    "jest": "^28.1.0",
+    "jest": "^28.1.1",
     "supertest": "^6.2.3"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  }
 }
